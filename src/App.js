@@ -1,23 +1,38 @@
-import logo from './logo.svg';
+// import dependencies
+import React, { useEffect } from 'react';
 import './App.css';
 
-function App() {
+// import redux components
+import store from './store'
+
+// import chat component
+import Chat from './components/chat/Chat'
+
+// import action
+import { createSession } from './actions/watson';
+
+// import axios
+import axios from 'axios';
+
+if (localStorage.session) {
+  delete axios.defaults.headers.common['session_id']
+  axios.defaults.headers.common['session_id'] = localStorage.session
+} else {
+  delete axios.defaults.headers.common['session_id']
+}
+
+const App = () => {
+  useEffect(() => {
+    // check if session already exist
+    if (!localStorage.session) {
+      // create session
+      store.dispatch(createSession())
+    }
+  }, [])
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="container">
+      <Chat />
     </div>
   );
 }
