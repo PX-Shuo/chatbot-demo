@@ -93,7 +93,7 @@ const Chat = ({ chat, userMessage, sendMessage }) => {
     })
     micStream.setStream(userMediaStream)
 
-    const preSignedURL = await axios.post('https://api.transcribestreamingapp.store/api/transcribe', {
+    const preSignedURL = await axios.post('https://chatbottranscribeapi.transcribestreamingapp.store/api/transcribe/generateurl', {
       sampleR: sampleRate
     })
     console.log(preSignedURL.data)

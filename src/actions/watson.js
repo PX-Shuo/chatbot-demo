@@ -27,7 +27,7 @@ export const userMessage = (message) => async (dispatch) => {
 // create a session - API call
 export const createSession = () => async (dispatch) => {
   try {
-    const res = await axios.get('/api/watson/session')
+    const res = await axios.get('https://chatbottranscribeapi.transcribestreamingapp.store/api/watson/session')
     dispatch({
       type: SESSION_SUCCESS,
       payload: res.data
@@ -43,7 +43,7 @@ export const createSession = () => async (dispatch) => {
 export const sendMessage = (message) => async (dispatch) => {
   try {
     const body = { input: message }
-    const res = await axios.post('/api/watson/message', body)
+    const res = await axios.post('https://chatbottranscribeapi.transcribestreamingapp.store/api/watson/message', body)
     // console.log(res.data.output.generic[0].text)
     console.log(res)
     dispatch({
