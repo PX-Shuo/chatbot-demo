@@ -22,8 +22,6 @@ const Chat = ({ chat, userMessage, sendMessage }) => {
   const [transcribeException, setTranscribeException] = useState(false)
   const [socketError, setSocketError] = useState(false)
 
-  // const [transcription, setTranscription] = useState([])
-
   const [sampleRate, setSampleRate] = useState(44100)
 
 
