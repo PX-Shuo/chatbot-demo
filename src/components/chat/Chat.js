@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { connect } from 'react-redux'
 import axios from 'axios'
 import mic from 'microphone-stream'
@@ -10,7 +10,9 @@ import { pcmEncode, downsampleBuffer } from '../../lib/audioUtils'
 import { userMessage, sendMessage } from '../../actions/watson'
 
 const Chat = ({ chat, userMessage, sendMessage }) => {
-  const [message, setMessage] = useState('')
+  const [message, setMessage] = useState([])
+  let inputString = ''
+  const [inputDisplay, setInputDisplay] = useState('')
 
 
 
@@ -20,20 +22,27 @@ const Chat = ({ chat, userMessage, sendMessage }) => {
   const [transcribeException, setTranscribeException] = useState(false)
   const [socketError, setSocketError] = useState(false)
 
-  const [transcription, setTranscription] = useState([])
+  // const [transcription, setTranscription] = useState([])
 
   const [sampleRate, setSampleRate] = useState(44100)
 
 
   const [inputSampleRate, setInputSampleRate] = useState()
   let micStream
-  // let stream
   const [stream, setStream] = useState()
 
   const [isRecording, setIsRecording] = useState(false)
 
+  useEffect(() => {
+    if (message.length !== 0)
+      message.map((msg) => (
+        inputString += msg
+      ))
+    console.log('Input String: ', inputString)
+    setInputDisplay(inputString)
+  }, [message])
 
-  
+
   const getAudioEventMessage = (buffer) => {
     return {
       headers: {
@@ -79,8 +88,18 @@ const Chat = ({ chat, userMessage, sendMessage }) => {
         if (!results[0].IsPartial) {
           // setTranscription(transcription => ([...transcription, outPut + '\n']))
           // setMessage(message => ([...message, outPut + '\n']))
-          // setMessage(message => ([...message, outPut + ' ']))
-          setMessage(message + outPut + ' ')
+          // setMessage([...message, outPut])
+          setMessage(oldArray => [...oldArray, outPut])
+          // message.map((msg) => {
+          //   console.log(msg)
+          // })
+          // console.log(outPut)
+          // setMessage(message + outPut + ' ')
+          // console.log(message)
+          // message.map((msg) => {
+          //   inputString += msg
+          // })
+          // setInputDisplay(inputString)
         }
       }
     }
@@ -101,9 +120,9 @@ const Chat = ({ chat, userMessage, sendMessage }) => {
     socket = new WebSocket(preSignedURL.data)
     socket.binaryType = 'arraybuffer'
 
-    setSampleRate(0)
+    // setSampleRate(0)
 
-    socket.onopen = function() {
+    socket.onopen = function () {
       micStream.on('data', function (rawAudioChunk) {
         let binary = convertAudioToBinaryMessage(rawAudioChunk)
 
@@ -134,7 +153,7 @@ const Chat = ({ chat, userMessage, sendMessage }) => {
     socket.onclose = function (closeEvent) {
       micStream.stop()
 
-      if(!socketError && !transcribeException) {
+      if (!socketError && !transcribeException) {
         if (closeEvent.code !== 1000) {
           console.log('</i><strong>Streaming Exception</strong><br>', closeEvent.reason)
         }
@@ -181,7 +200,7 @@ const Chat = ({ chat, userMessage, sendMessage }) => {
             // });
             streamAudioToWebSocket(userMediaStream)
           })
-        
+
         // stream = await window.navigator.mediaDevices.getUserMedia({
         //   video: false,
         //   audio: true
@@ -201,10 +220,17 @@ const Chat = ({ chat, userMessage, sendMessage }) => {
     const code = e.keyCode || e.which
     if (code === 13) {
       console.log(message)
-      userMessage(message)
-      sendMessage(message)
-      setMessage('')
+      // userMessage(message)
+      // sendMessage(message)
+      userMessage(inputDisplay)
+      sendMessage(inputDisplay)
+      setMessage([])
     }
+  }
+
+  const handleOnChange = (e) => {
+    console.log(e.target.value)
+    setInputDisplay(e.target.value)
   }
 
   return (
@@ -215,19 +241,20 @@ const Chat = ({ chat, userMessage, sendMessage }) => {
           : chat.map((msg, i) => <div className={msg.type} key={i}>{msg.message}</div>)
         }
       </div>
-      {/* <div>{transcription}</div> */}
+
       <div className='chatBox'>
         <input
           className='inputBar'
           type='text'
-          value={message}
-          // value={transcription}
-          onChange={(e) => setMessage(e.target.value)}
+          // value={message}
+          value={inputDisplay}
+          // onChange={(e) => setMessage(e.target.value)}
+          onChange={handleOnChange}
           onKeyPress={handleSubmit}
         />
         <button onClick={handleRecord}>Record</button>
       </div>
-      
+
     </div>
   )
 }
