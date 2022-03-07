@@ -14,7 +14,7 @@
 }
 .history {
   padding: 10px;
-  overflow: scroll;
+  /* overflow: scroll; */
   height: 600px;
 }
 .history > * {
@@ -38,6 +38,9 @@
 }
 
 .chatBox {
+  display: flex;
+}
+.inputBar {
   /* position: absolute;
   bottom: 0;
   left: 1px; */
