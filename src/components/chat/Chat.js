@@ -79,7 +79,8 @@ const Chat = ({ chat, userMessage, sendMessage }) => {
         if (!results[0].IsPartial) {
           // setTranscription(transcription => ([...transcription, outPut + '\n']))
           // setMessage(message => ([...message, outPut + '\n']))
-          setMessage(message => ([...message, outPut + ' ']))
+          // setMessage(message => ([...message, outPut + ' ']))
+          setMessage(message + outPut + ' ')
         }
       }
     }
