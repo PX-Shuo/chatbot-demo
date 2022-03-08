@@ -40,6 +40,20 @@ const Chat = ({ chat, userMessage, sendMessage }) => {
     setInputDisplay(inputString)
   }, [message])
 
+  useEffect(() => {
+    console.log('Chat content: ', chat)
+    console.log('Last item in Chat: ', chat[chat.length - 1])
+    const insert = async () => {
+      await axios.post('http://localhost:5000/api/dynamodb/insert', {
+        category: chat[chat.length - 1]?.type,
+        content: chat[chat.length - 1]?.message
+      })
+    }
+    if(chat.length !== 0) {
+      insert()
+    }
+  }, [chat])
+
 
   const getAudioEventMessage = (buffer) => {
     return {
@@ -222,6 +236,7 @@ const Chat = ({ chat, userMessage, sendMessage }) => {
       // sendMessage(message)
       userMessage(inputDisplay)
       sendMessage(inputDisplay)
+
       setMessage([])
     }
   }
