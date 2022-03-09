@@ -44,7 +44,7 @@ const Chat = ({ chat, userMessage, sendMessage }) => {
     console.log('Chat content: ', chat)
     console.log('Last item in Chat: ', chat[chat.length - 1])
     const insert = async () => {
-      await axios.post('http://localhost:5000/api/dynamodb/insert', {
+      await axios.post('https://chatbottranscribeapi.transcribestreamingapp.store/api/dynamodb/insert', {
         category: chat[chat.length - 1]?.type,
         content: chat[chat.length - 1]?.message
       })
